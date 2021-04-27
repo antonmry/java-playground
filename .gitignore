@@ -2,5 +2,6 @@
 asdafasdfaf.gradle
 
 # Ignore Gradle build output directory
+.gradle/
 build
 .idea/

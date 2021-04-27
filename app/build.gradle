@@ -17,6 +17,7 @@ plugins {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -29,6 +30,24 @@ dependencies {
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:30.0-jre'
+
+    // RegexApp
+    implementation 'org.apache.ant:ant-apache-regexp:1.10.10'
+    implementation 'com.google.re2j:re2j:1.6'
+    implementation 'org.openjdk.jol:jol-core:0.15'
+    implementation 'org.ehcache:sizeof:0.4.0'
+    implementation 'com.github.jbellis:jamm:0.4.0'
+
+    // Note:
+    /**
+     Download from https://github.com/piotr-yuxuan/jamm/packages/415322
+     mvn install:install-file -Dfile=jamm-0.4.0.jar \
+     -DgroupId=com.github.jbellis \
+       -DartifactId=jamm \
+       -Dversion=0.4.0 \
+       -Dpackaging=jar \
+       -DgeneratePom=true
+ */
 }
 
 application {
