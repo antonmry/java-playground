@@ -22,8 +22,15 @@ public class RegexApp {
             .collect(Collectors.toList());
 
         var regexps = Arrays.asList(
-            "^[\\w\\-]+(\\.[\\w\\-]+)*@[\\w\\-]+(\\.[\\w\\-]+)*(\\.)[a-zA-Z]+$",
-            "(?s)^(\\.\\*\\??)?(.*)"
+            "^[\\w\\-]+(\\.[\\w\\-]+)*@[\\w\\-]+(\\.[\\w\\-]+)*(\\.)[a-zA-Z]+$", // Email
+            "(?s)^(\\.\\*\\??)?(.*)",
+            "([0-9]{4})-?(1[0-2]|0[1-9])-?(3[01]|0[1-9]|[12][0-9])", // Date
+            "[\\w\\.]+@[\\w\\.]+", // Email 2
+            "([0-9]{3})-([0-9]{3})-([0-9]{4})", // Phone 2
+            "($+((((($+((a+a*)+(b+c))*)((cc)(b+b))+a)+((b+c*)+(c+c)))+a)+(c*a+($+(c+c)b))))+c", // Random
+            "[0-8][0-9]{2}-[0-9]{2}-[0-9]{4}", // Social
+            "A[ZLRK]|C[TAO]|D[CE]|FL|GA|HI|I[ALND]|K[SY]|LA|M[ADEINOST]|"
+                + "N[HCDEJMVY]|O[HKR]|PA|RI|S[CD]|T[XN]|UT|V[AT]|W[VAIY]" // States
         );
 
         regexps.forEach(regexp -> {
