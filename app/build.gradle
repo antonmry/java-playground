@@ -34,6 +34,9 @@ dependencies {
     // RegexApp
     implementation 'org.apache.ant:ant-apache-regexp:1.10.10'
     implementation 'com.google.re2j:re2j:1.6'
+    implementation 'com.gliwka.hyperscan:hyperscan:5.4.0-2.0.0'
+
+    // Memory Size
     implementation 'org.openjdk.jol:jol-core:0.15'
     implementation 'org.ehcache:sizeof:0.4.0'
     implementation 'com.github.jbellis:jamm:0.4.0'
