@@ -81,6 +81,13 @@ s3.start()
 s3.stop(0)
 ```
 
+## [JEP 413](https://openjdk.java.net/jeps/413): Code Snippets in Java API Documentation
+
+```bash
+javadoc -private -d javadocs/ -sourcepath src/ example --snippet-path ./snippet-files
+
+```
+
 ## TODO
 
 New Relic Java Agent? Comparisson?
