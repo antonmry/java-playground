@@ -7,7 +7,7 @@ https://openjdk.java.net/projects/jdk/18/
 ```sh
 sdk install java 18-open
 sdk use java 18-open
-jshell
+jshell -v --add-modules jdk.incubator.vector
 ```
 JShell tutorial: https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html 
 
@@ -89,10 +89,87 @@ javadoc -private -d ../docs/java18/ -sourcepath src/ example --snippet-path ./sn
 javac snippet-files/ShowOptional.java
 ```
 
+##  [JEP 416](https://openjdk.java.net/jeps/416): Reimplement Core Reflection with Method Handles
+
+> Reimplement java.lang.reflect on top of method handles as the common underlying reflective mechanism of 
+> the platform by replacing the bytecode-generating implementations of Method::invoke, Constructor::newInstance, 
+> Field::get, and Field::set.
+
+MethodHandles: https://www.baeldung.com/java-method-handles
+
+```java
+import java.lang.reflect.*;
+import java.lang.invoke.*;
+
+public record Demo(String s) {
+  private String hello() {
+    return s;
+  }
+}
+
+MethodHandles.Lookup lookup = MethodHandles.publicLookup();
+Method helloMethod = Demo.class.getDeclaredMethod("hello");
+helloMethod.setAccessible(true);
+MethodHandle demoMH = lookup.unreflect(helloMethod);
+
+var demo = new Demo("Anton")
+demo.hello()
+(String) demoMH.invoke(demo)
+```
+
+## [JEP 417](https://openjdk.java.net/jeps/417): Vector API (Third Incubator)
+
+See https://www.morling.dev/blog/fizzbuzz-simd-style/
+
+```java
+
+void scalarComputation(float[] a, float[] b, float[] c) {
+   for (int i = 0; i < a.length; i++) {
+        c[i] = (a[i] * a[i] + b[i] * b[i]) * -1.0f;
+   }
+}
+
+import jdk.incubator.vector.*;
+static final VectorSpecies<Float> SPECIES = FloatVector.SPECIES_PREFERRED;
+
+void vectorComputation(float[] a, float[] b, float[] c) {
+    int i = 0;
+    int upperBound = SPECIES.loopBound(a.length);
+    for (; i < upperBound; i += SPECIES.length()) {
+        // FloatVector va, vb, vc;
+        var va = FloatVector.fromArray(SPECIES, a, i);
+        var vb = FloatVector.fromArray(SPECIES, b, i);
+        var vc = va.mul(va)
+                   .add(vb.mul(vb))
+                   .neg();
+        vc.intoArray(c, i);
+    }
+    for (; i < a.length; i++) {
+        c[i] = (a[i] * a[i] + b[i] * b[i]) * -1.0f;
+    }
+}
+
+float[] a = new float[10_000_000];
+float[] b = new float[10_000_000];
+float[] r = new float[10_000_000];
+Arrays.fill(a, 1L);
+Arrays.fill(b, 2L);
+
+int i;
+long t0;
+for(t0=System.nanoTime(),i=0; i<1000; ++i){
+scalarComputation(a, b, r);
+} long elapsed=System.nanoTime()-t0;
+
+for(t0=System.nanoTime(),i=0; i<1000; ++i){
+vectorComputation(a, b, r);
+} long elapsed=System.nanoTime()-t0;
+
+```
+
 ## TODO
 
 New Relic Java Agent? Comparisson?
 jshell kung-fu? import libraries in advance?
-  https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html 
   https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html
 jbang?
