@@ -167,9 +167,20 @@ vectorComputation(a, b, r);
 
 ```
 
+## [JEP 418](https://openjdk.java.net/jeps/418): Internet-Address Resolution SPI
+
+```java
+InetAddress.getByName("www.galiglobal.com")
+
+
+
+```
+
+ServiceLoader<SimpleResolverProviderImpl> loader = ServiceLoader.load(SimpleResolverProviderImpl.class);
+ServiceLoader<java.net.spi.InetAddressResolverProvider> loader = ServiceLoader.load(java.net.spi.InetAddressResolverProvider.class);
+
 ## TODO
 
-New Relic Java Agent? Comparisson?
 jshell kung-fu? import libraries in advance?
   https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html
 jbang?
