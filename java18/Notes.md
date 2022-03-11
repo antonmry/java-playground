@@ -7,7 +7,7 @@ https://openjdk.java.net/projects/jdk/18/
 ```sh
 sdk install java 18-open
 sdk use java 18-open
-jshell -v --add-modules jdk.incubator.vector
+jshell
 ```
 JShell tutorial: https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html 
 
@@ -121,6 +121,10 @@ demo.hello()
 
 See https://www.morling.dev/blog/fizzbuzz-simd-style/
 
+```sh
+jshell -v --add-modules jdk.incubator.vector
+```
+
 ```java
 
 void scalarComputation(float[] a, float[] b, float[] c) {
@@ -178,6 +182,26 @@ jar cvf simpleresolverprovider.jar -C src/provider/ .
 InetAddress.getByName("www.galiglobal.com")
 /env -class-path simpleresolverprovider.jar
 InetAddress.getByName("www.galiglobal.com")
+```
+
+## [JEP 419](https://openjdk.java.net/jeps/419): Foreign Function & Memory API (Second Incubator)
+
+See https://foojay.io/today/project-panama-for-newbies-part-1/
+
+```sh
+jshell -v --add-modules jdk.incubator.foreign
+```
+
+```java
+import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
+import static jdk.incubator.foreign.SegmentAllocator.implicitAllocator;
+import static org.unix.stdio_h.printf;
+
+try (var scope = newConfinedScope()) {
+   MemorySegment cString = implicitAllocator().allocateUtf8String("Hello World! Panama style\n");
+   printf(cString);
+   System.out.println(cString);
+}
 ```
 
 ## TODO
