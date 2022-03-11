@@ -169,15 +169,16 @@ vectorComputation(a, b, r);
 
 ## [JEP 418](https://openjdk.java.net/jeps/418): Internet-Address Resolution SPI
 
-```java
-InetAddress.getByName("www.galiglobal.com")
-
-
-
+```sh
+javac src/provider/impl/SimpleResolverProviderImpl.java
+jar cvf simpleresolverprovider.jar -C src/provider/ .
 ```
 
-ServiceLoader<SimpleResolverProviderImpl> loader = ServiceLoader.load(SimpleResolverProviderImpl.class);
-ServiceLoader<java.net.spi.InetAddressResolverProvider> loader = ServiceLoader.load(java.net.spi.InetAddressResolverProvider.class);
+```java
+InetAddress.getByName("www.galiglobal.com")
+/env -class-path simpleresolverprovider.jar
+InetAddress.getByName("www.galiglobal.com")
+```
 
 ## TODO
 

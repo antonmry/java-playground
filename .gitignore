@@ -5,3 +5,7 @@ build
 
 # NewRelic agent
 javaagent/newrelic
+
+# Java
+*.jar
+*.class
