@@ -1,6 +1,8 @@
 # Java 18
 
+https://en.wikipedia.org/wiki/Java_version_history
 https://openjdk.java.net/projects/jdk/18/
+https://blogs.oracle.com/javamagazine/post/java-project-amber-lambda-loom-panama-valhalla
 
 ## Install Java 18
 
@@ -10,27 +12,6 @@ sdk use java 18-open
 jshell
 ```
 JShell tutorial: https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html 
-
-## [JEP 400](https://openjdk.java.net/jeps/400): UTF-8 by Default
-
-```sh
-JAVA_TOOL_OPTIONS=-Dfile.encoding=x-windows-950 jshell
-```
-
-```java
-import java.nio.charset.Charset;
-Charset.defaultCharset()
-Charset.availableCharsets()
-
-var fileReader = new FileReader("test.txt");
-
-int data = fileReader.read();
-while(data != -1) {
-  System.out.print((char) data);
-  data = fileReader.read();
-}
-fileReader.close();
-```
 
 ## [JEP 408](https://openjdk.java.net/jeps/408): Simple Web Server
 
@@ -83,10 +64,110 @@ s3.stop(0)
 
 ## [JEP 413](https://openjdk.java.net/jeps/413): Code Snippets in Java API Documentation
 
-```bash
+```sh
 javadoc -private -d ../docs/java18/ -sourcepath src/ example --snippet-path ./snippet-files
 
 javac snippet-files/ShowOptional.java
+```
+## [JEP 400](https://openjdk.java.net/jeps/400): UTF-8 by Default
+
+```sh
+JAVA_TOOL_OPTIONS=-Dfile.encoding=x-windows-950 jshell
+```
+
+```java
+import java.nio.charset.Charset;
+Charset.defaultCharset()
+Charset.availableCharsets()
+
+var fileReader = new FileReader("test.txt");
+
+int data = fileReader.read();
+while(data != -1) {
+  System.out.print((char) data);
+  data = fileReader.read();
+}
+fileReader.close();
+```
+
+## [JEP 420](https://openjdk.java.net/jeps/420): Pattern Matching for switch (Second Preview)
+
+```sh
+jshell --enable-preview
+```sh
+
+```java
+
+// Java 17
+
+Object test = "test!";
+switch (test) {
+  case Integer i -> System.out.println("Integer!");
+  case String s  -> System.out.println("Hello " + s);
+  default        -> System.out.println("Nop!");
+}
+```
+
+```java
+
+Object test = "test!";
+switch (test) {
+  case String s                                 -> System.out.println("Hello " + s);
+  case String s && s.equals("unreachable code") -> System.out.println("Hello " + s);
+  default                                       -> System.out.println("Nop!");
+}
+```
+
+```java
+
+sealed interface S permits A, B, C {}
+final class A implements S {}
+final class B implements S {}
+record C(int i) implements S {}  // Implicitly final
+
+static int testSealedExhaustive(S s) {
+    return switch (s) {
+        case A a -> 1;
+        case B b -> 2;
+        case C c -> 3;
+    };
+}
+```
+
+## [JEP 421](https://openjdk.java.net/jeps/421): Deprecate Finalization for Removal
+
+```java
+FileInputStream  input  = null;
+FileOutputStream output = null;
+try {
+    input  = new FileInputStream("test.txt");
+    output = new FileOutputStream("test2.txt");
+    //... copy bytes from input to output ...
+    output.close();  output = null;
+    input.close();   input  = null;
+} finally {
+    if (output != null) output.close();
+    if (input  != null) input.close();
+}
+```
+
+```java
+
+try (FileInputStream input = new FileInputStream("test.txt");
+     FileOutputStream output = new FileOutputStream("test2.txt")) {
+    //... copy bytes from input to output ...
+}
+```
+
+```java
+
+// Java 9: deprecated
+// Java 18: deprecated for removal
+
+class A {
+  @Override
+  public void finalize() {}
+}
 ```
 
 ##  [JEP 416](https://openjdk.java.net/jeps/416): Reimplement Core Reflection with Method Handles
@@ -115,6 +196,19 @@ MethodHandle demoMH = lookup.unreflect(helloMethod);
 var demo = new Demo("Anton")
 demo.hello()
 (String) demoMH.invoke(demo)
+```
+
+## [JEP 418](https://openjdk.java.net/jeps/418): Internet-Address Resolution SPI
+
+```sh
+javac src/provider/impl/SimpleResolverProviderImpl.java
+jar cvf simpleresolverprovider.jar -C src/provider/ .
+```
+
+```java
+InetAddress.getByName("www.galiglobal.com")
+/env -class-path simpleresolverprovider.jar
+InetAddress.getByName("www.galiglobal.com")
 ```
 
 ## [JEP 417](https://openjdk.java.net/jeps/417): Vector API (Third Incubator)
@@ -171,18 +265,6 @@ vectorComputation(a, b, r);
 
 ```
 
-## [JEP 418](https://openjdk.java.net/jeps/418): Internet-Address Resolution SPI
-
-```sh
-javac src/provider/impl/SimpleResolverProviderImpl.java
-jar cvf simpleresolverprovider.jar -C src/provider/ .
-```
-
-```java
-InetAddress.getByName("www.galiglobal.com")
-/env -class-path simpleresolverprovider.jar
-InetAddress.getByName("www.galiglobal.com")
-```
 
 ## [JEP 419](https://openjdk.java.net/jeps/419): Foreign Function & Memory API (Second Incubator)
 
@@ -204,8 +286,8 @@ try (var scope = newConfinedScope()) {
 }
 ```
 
-## TODO
+## Resources
 
-jshell kung-fu? import libraries in advance?
-  https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html
-jbang?
+- https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html
+- https://www.jbang.dev/
+- https://www.happycoders.eu/java/java-18-features/
