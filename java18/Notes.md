@@ -288,6 +288,7 @@ try (var scope = newConfinedScope()) {
 
 ## Resources
 
+- https://sdkman.io/
 - https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html
 - https://www.jbang.dev/
 - https://www.happycoders.eu/java/java-18-features/
