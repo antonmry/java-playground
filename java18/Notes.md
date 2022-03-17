@@ -1,8 +1,8 @@
 # Java 18
 
-https://en.wikipedia.org/wiki/Java_version_history
-https://openjdk.java.net/projects/jdk/18/
-https://blogs.oracle.com/javamagazine/post/java-project-amber-lambda-loom-panama-valhalla
+- https://en.wikipedia.org/wiki/Java_version_history
+- https://openjdk.java.net/projects/jdk/18/
+- https://blogs.oracle.com/javamagazine/post/java-project-amber-lambda-loom-panama-valhalla
 
 ## Install Java 18
 
@@ -11,7 +11,6 @@ sdk install java 18-open
 sdk use java 18-open
 jshell
 ```
-JShell tutorial: https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html 
 
 ## [JEP 408](https://openjdk.java.net/jeps/408): Simple Web Server
 
@@ -94,7 +93,7 @@ fileReader.close();
 
 ```sh
 jshell --enable-preview
-```sh
+```
 
 ```java
 
