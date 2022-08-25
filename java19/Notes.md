@@ -102,6 +102,64 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 
 ## [JEP 427](https://openjdk.java.net/jeps/427): Pattern Matching for switch (Third Preview)
 
+```java
+Object o = "Anton";
+
+switch (o) {
+  case Integer i -> {
+    if (i >= 0)
+      System.out.println("Positive number");
+    else
+      System.out.println("Negative number");
+  }
+  case String s -> {
+    if (s.contains("foo"))
+      System.out.println("String with 'foo'");
+    else
+      System.out.println("String without 'foo'");
+  }
+  default -> System.out.println("No String or Integer");
+}
+```
+
+```java
+switch (o) {
+  case Integer i when i >= 0 -> System.out.println("Positive number");
+  case Integer i -> System.out.println("Negative number");
+  case String s when s.contains("foo") -> System.out.println("String with 'foo'");
+  case String s  -> System.out.println("String without 'foo'");
+  default -> System.out.println("No String or Integer");
+}
+```
+
+```java
+switch (o) {
+  case Point(int x && x > 0, int y) -> System.out.println("Positive x");
+  case String s when s.contains("foo") -> System.out.println("String with 'foo'");
+  case String s  -> System.out.println("String without 'foo'");
+  default -> System.out.println("No String or Integer");
+}
+```
+
+```java
+switch (o) {
+  case Point(int x, int y) when x >= 0 -> System.out.println("Positive x");
+  case String s when s.contains("foo") -> System.out.println("String with 'foo'");
+  case String s  -> System.out.println("String without 'foo'");
+  default -> System.out.println("No String or Integer");
+}
+```
+
+```java
+Object o = null;
+
+switch (o) {
+  case Point(int x, int y) -> System.out.println("Point");
+  case null -> System.out.println("Null");
+  default -> System.out.println("Not Point");
+}
+```
+
 ## [JEP 405](https://openjdk.java.net/jeps/405): Record Patterns (Preview)
 
 ## [JEP 422](https://openjdk.java.net/jeps/422): Linux/RISC-V Port
