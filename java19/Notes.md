@@ -1,7 +1,7 @@
 # Java 19
 
-- https://en.wikipedia.org/wiki/Java_version_history
-- https://openjdk.java.net/projects/jdk/19/
+- <https://en.wikipedia.org/wiki/Java_version_history>
+- <https://openjdk.java.net/projects/jdk/19/>
 
 ## Install Java 19
 
@@ -127,40 +127,58 @@ switch (o) {
   case Integer i when i >= 0 -> System.out.println("Positive number");
   case Integer i -> System.out.println("Negative number");
   case String s when s.contains("foo") -> System.out.println("String with 'foo'");
-  case String s  -> System.out.println("String without 'foo'");
+  case String s -> System.out.println("String without 'foo'");
   default -> System.out.println("No String or Integer");
 }
 ```
 
 ```java
+
+sealed interface S permits A, B {}
+record A(int x, int y) implements S {}
+record B(int x, int y) implements S {}
+
+S o = new A(0, 0);
+
 switch (o) {
-  case Point(int x && x > 0, int y) -> System.out.println("Positive x");
-  case String s when s.contains("foo") -> System.out.println("String with 'foo'");
-  case String s  -> System.out.println("String without 'foo'");
-  default -> System.out.println("No String or Integer");
+  case A(int x, int y) when x >= 0 -> System.out.println("A, positive x");
+  case A(int x, int y) when x < 0 -> System.out.println("B, negative x");
+  case B(int x, int y) -> System.out.println("B");
+  default -> System.out.println("Any of the previous options");
 }
 ```
 
 ```java
-switch (o) {
-  case Point(int x, int y) when x >= 0 -> System.out.println("Positive x");
-  case String s when s.contains("foo") -> System.out.println("String with 'foo'");
-  case String s  -> System.out.println("String without 'foo'");
-  default -> System.out.println("No String or Integer");
-}
-```
-
-```java
-Object o = null;
+S o = null;
 
 switch (o) {
-  case Point(int x, int y) -> System.out.println("Point");
-  case null -> System.out.println("Null");
-  default -> System.out.println("Not Point");
+  case A(int x, int y) when x >= 0 -> System.out.println("A, positive x");
+  case A(int x, int y) when x < 0 -> System.out.println("B, negative x");
+  case B(int x, int y) -> System.out.println("B");
+  //case null -> System.out.println("Null");
+  default -> System.out.println("Any of the previous options");
 }
 ```
 
 ## [JEP 405](https://openjdk.java.net/jeps/405): Record Patterns (Preview)
+
+```java
+sealed interface S permits A, B {}
+record A(int x, int y) implements S {}
+record B(int x, int y) implements S {}
+
+S o = new A(0, 0);
+
+//JEP 394, java 16
+if (o instanceof A a) {
+    System.out.println(a.x() + a.y());
+}
+
+if (o instanceof A(int x, int y)) {
+    System.out.println(x + y);
+}
+
+```
 
 ## [JEP 422](https://openjdk.java.net/jeps/422): Linux/RISC-V Port
 
@@ -170,10 +188,10 @@ switch (o) {
 
 ## Resources
 
-- https://sdkman.io/
-- https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html
-- https://www.jbang.dev/
-- https://jdk.java.net/19/
+- <https://sdkman.io/>
+- <https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html>
+- <https://www.jbang.dev/>
+- <https://jdk.java.net/19/>
 - [Java 19 - The Best Java Release? - Inside Java Newscast #27](https://www.youtube.com/watch?v=UG9nViGZCEw)
 - Java Magazine: [Coming to Java 19: Virtual threads and platform threads](https://blogs.oracle.com/javamagazine/post/java-loom-virtual-threads-platform-threads)
 - [Java Asynchronous Programming Full Tutorial with Loom and Structured Concurrency - JEP Café #13](https://inside.java/2022/08/02/jepcafe13/)
