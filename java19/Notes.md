@@ -22,13 +22,16 @@ jshell --enable-preview --add-modules jdk.incubator.concurrent
 > cores cannot improve throughput in that case.
 
 ```java
-Thread thread = Thread.ofVirtual().start(() -> System.out.println("Hello from the virtual thread"));
 
-Thread thread = Thread.ofPlatform().start(() -> System.out.println("Hello from the platform thread"));
-
-var vThread = Thread.startVirtualThread(() -> {
+var thread = Thread.startVirtualThread(() -> {
   System.out.println("Hello from the virtual thread");
 });
+
+thread.join();
+
+Thread.ofPlatform().start(() -> System.out.println(Thread.currentThread()));
+Thread.ofVirtual().start(() -> System.out.println(Thread.currentThread()));
+
 ```
 
 ```java
@@ -57,6 +60,11 @@ Thread thread = Thread.ofVirtual().start(() -> {int result = 12 / 0;});
 
 Thread thread = Thread.ofPlatform().start(() -> {int result = 12 / 0;});
 ```
+
+- [Virtual Thread Deep Dive - Inside Java Newscast #23](https://nipafx.dev/inside-java-newscast-23/)
+- [Launching 10 millions virtual threads with Loom - JEP Café #12](https://inside.java/2022/07/07/jepcafe12/)
+- [Java 19 Virtual Threads - JEP Café #11](https://inside.java/2022/06/08/jepcafe11/)
+- [Loom and Thread Fairness](https://www.morling.dev/blog/loom-and-thread-fairness/)
 
 ## [JEP 428](https://openjdk.java.net/jeps/428): Structured Concurrency (Incubator)
 
@@ -99,6 +107,9 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
     System.out.println(user.resultNow() + ": " + order.resultNow());
 }
 ```
+
+- [Java Asynchronous Programming Full Tutorial with Loom and Structured Concurrency - JEP Café #13](https://inside.java/2022/08/02/jepcafe13/)
+- [Project Loom Brings Structured Concurrency - Inside Java Newscast #17](https://www.youtube.com/watch?v=2J2tJm_iwk0)
 
 ## [JEP 427](https://openjdk.java.net/jeps/427): Pattern Matching for switch (Third Preview)
 
@@ -160,6 +171,8 @@ switch (o) {
 }
 ```
 
+- [when And null In Pattern Matching](https://nipafx.dev/inside-java-newscast-24/)
+
 ## [JEP 405](https://openjdk.java.net/jeps/405): Record Patterns (Preview)
 
 ```java
@@ -193,8 +206,4 @@ if (o instanceof A(int x, int y)) {
 - <https://www.jbang.dev/>
 - <https://jdk.java.net/19/>
 - [Java 19 - The Best Java Release? - Inside Java Newscast #27](https://www.youtube.com/watch?v=UG9nViGZCEw)
-- Java Magazine: [Coming to Java 19: Virtual threads and platform threads](https://blogs.oracle.com/javamagazine/post/java-loom-virtual-threads-platform-threads)
-- [Java Asynchronous Programming Full Tutorial with Loom and Structured Concurrency - JEP Café #13](https://inside.java/2022/08/02/jepcafe13/)
-- [Loom and Thread Fairness](https://www.morling.dev/blog/loom-and-thread-fairness/)
-- [Project Loom Brings Structured Concurrency - Inside Java Newscast #17](https://www.youtube.com/watch?v=2J2tJm_iwk0)
-- Java Magazine: [Pattern matching updates for Java 19's JEP 427: when and null](https://blogs.oracle.com/javamagazine/post/java-pattern-matching-switch-when-null)
+
