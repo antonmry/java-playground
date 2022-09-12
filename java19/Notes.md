@@ -2,12 +2,13 @@
 
 - <https://en.wikipedia.org/wiki/Java_version_history>
 - <https://openjdk.java.net/projects/jdk/19/>
+- <https://jdk.java.net/19/>
 
 ## Install Java 19
 
 ```sh
-sdk install java 19-open
-sdk use java 19-open
+sdk install java 19.ea.36-open
+sdk use java 19.ea.36-open
 jshell --enable-preview --add-modules jdk.incubator.concurrent
 ```
 
@@ -61,20 +62,29 @@ Thread thread = Thread.ofVirtual().start(() -> {int result = 12 / 0;});
 Thread thread = Thread.ofPlatform().start(() -> {int result = 12 / 0;});
 ```
 
+There's no silver bullet. Be careful with:
+- Framework / library support
+- Thread fairness
+- Synchronization
+- JNI
+- ThreadLocal variables
+
 - [Virtual Thread Deep Dive - Inside Java Newscast #23](https://nipafx.dev/inside-java-newscast-23/)
 - [Launching 10 millions virtual threads with Loom - JEP Café #12](https://inside.java/2022/07/07/jepcafe12/)
 - [Java 19 Virtual Threads - JEP Café #11](https://inside.java/2022/06/08/jepcafe11/)
 - [Loom and Thread Fairness](https://www.morling.dev/blog/loom-and-thread-fairness/)
+- [Going inside Java's Project Loom and virtual threads](https://blogs.oracle.com/javamagazine/post/going-inside-javas-project-loom-and-virtual-threads)
 
 ## [JEP 428](https://openjdk.java.net/jeps/428): Structured Concurrency (Incubator)
 
 ```java
 String getUser() throws InterruptedException {
-    Thread.sleep(5000);
+    Thread.sleep(3000);
     return "Anton";
 };
 
-Integer getOrder() {
+Integer getOrder() throws InterruptedException {
+    Thread.sleep(2000);
     return 10;
 //    return 10/0;
 };
@@ -204,6 +214,5 @@ if (o instanceof A(int x, int y)) {
 - <https://sdkman.io/>
 - <https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html>
 - <https://www.jbang.dev/>
-- <https://jdk.java.net/19/>
 - [Java 19 - The Best Java Release? - Inside Java Newscast #27](https://www.youtube.com/watch?v=UG9nViGZCEw)
 
