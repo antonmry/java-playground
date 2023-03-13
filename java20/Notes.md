@@ -14,32 +14,15 @@ jshell --enable-preview --add-modules jdk.incubator.concurrent
 
 ## New features
 
-## [JEP 420](https://openjdk.java.net/jeps/420): Pattern Matching for switch (Second Preview)
-## [JEP 427](https://openjdk.java.net/jeps/427): Pattern Matching for switch (Third Preview)
 ## [JEP 433](https://openjdk.java.net/jeps/433): Pattern Matching for switch (Fourth Preview)
 
-```java
-
-// Java 17
-
-Object test = "test!";
-switch (test) {
-  case Integer i -> System.out.println("Integer!");
-  case String s  -> System.out.println("Hello " + s);
-  default        -> System.out.println("Nop!");
-}
-```
-
-```java
-
-// Java 18
-
-switch (test) {
-  case String s                                 -> System.out.println("Hello " + s);
-  case String s && s.equals("unreachable code") -> System.out.println("Hello " + s);
-  default                                       -> System.out.println("Nop!");
-}
-```
+- An exhaustive switch (i.e., a switch expression or a pattern switch
+  statement) over an enum class now throws MatchException rather than
+  IncompatibleClassChangeError if no switch label applies at run time.
+- The grammar for switch labels is simpler.
+- Inference of type arguments for generic record patterns is now supported in
+  switch expressions and statements, along with the other constructs that
+  support patterns.
 
 ```java
 
@@ -52,38 +35,18 @@ static int testSealedExhaustive(S s) {
     return switch (s) {
         case A a -> 1;
         case B b -> 2;
-        case C c -> 3;
+//        case C c -> 3;
     };
 }
 ```
 
 ```java
-Object o = "Anton";
-
-switch (o) {
-  case Integer i -> {
-    if (i >= 0)
-      System.out.println("Positive number");
-    else
-      System.out.println("Negative number");
-  }
-  case String s -> {
-    if (s.contains("foo"))
-      System.out.println("String with 'foo'");
-    else
-      System.out.println("String without 'foo'");
-  }
-  default -> System.out.println("No String or Integer");
-}
-```
-
-```java
-switch (o) {
-  case Integer i when i >= 0 -> System.out.println("Positive number");
-  case Integer i -> System.out.println("Negative number");
-  case String s when s.contains("foo") -> System.out.println("String with 'foo'");
-  case String s -> System.out.println("String without 'foo'");
-  default -> System.out.println("No String or Integer");
+enum Color { RED, GREEN, BLUE; }
+var c = Color.RED;
+var result = switch(c) {
+  case RED -> 0;
+  case GREEN -> 1;
+  // case BLUE -> 2;
 }
 ```
 
@@ -103,101 +66,44 @@ switch (o) {
 }
 ```
 
-```java
-S o = null;
-
-switch (o) {
-  case A(int x, int y) when x >= 0 -> System.out.println("A, positive x");
-  case A(int x, int y) when x < 0 -> System.out.println("B, negative x");
-  case B(int x, int y) -> System.out.println("B");
-  //case null -> System.out.println("Null");
-  default -> System.out.println("Any of the previous options");
-}
-```
-
-## [JEP 405](https://openjdk.java.net/jeps/405): Record Patterns (First Preview)
 ## [JEP 432](https://openjdk.java.net/jeps/432): Record Patterns (Second Preview)
 
+- Add support for inference of type arguments of generic record patterns,
+- Add support for record patterns to appear in the header of an enhanced for
+  statement, and
+- Remove support for named record patterns.
+
 ```java
-sealed interface S permits A, B {}
+sealed interface S permits A{}
 record A(int x, int y) implements S {}
-record B(int x, int y) implements S {}
 
+// Java 19
 S o = new A(0, 0);
-
-//JEP 394, java 16
-if (o instanceof A a) {
-    System.out.println(a.x() + a.y());
-}
 
 if (o instanceof A(int x, int y)) {
     System.out.println(x + y);
 }
 
+// Java 20
+A[] as = new A[]{new A(0,0), new A(1,1)}
+for (A(var x, var y): as) {
+  System.out.println(x+y);
+}
+
 ```
-## [JEP 425](https://openjdk.java.net/jeps/425): Virtual Threads (First Preview)
+
 ## [JEP 436](https://openjdk.java.net/jeps/436): Virtual Threads (Second Preview)
 
-> virtual threads can significantly improve application throughput when
-> the number of concurrent tasks is high (more than a few thousand), and
-> The workload is not CPU-bound, since having many more threads than processor
-> cores cannot improve throughput in that case.
+- Minor changes since the first preview.
 
 ```java
-
-var thread = Thread.startVirtualThread(() -> {
-  System.out.println("Hello from the virtual thread");
-});
-
-thread.join();
-
 Thread.ofPlatform().start(() -> System.out.println(Thread.currentThread()));
 Thread.ofVirtual().start(() -> System.out.println(Thread.currentThread()));
-
 ```
 
-```java
-
-try (var executor = Executors.newFixedThreadPool(1_000)) {
-    IntStream.range(0, 10_000).forEach(i -> {
-        executor.submit(() -> {
-            Thread.sleep(1000);
-            return i;
-        });
-    });
-}
-
-try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-    IntStream.range(0, 10_000).forEach(i -> {
-        executor.submit(() -> {
-            Thread.sleep(1000);
-            return i;
-        });
-    });
-}
-```
-
-```java
-Thread thread = Thread.ofVirtual().start(() -> {int result = 12 / 0;});
-
-Thread thread = Thread.ofPlatform().start(() -> {int result = 12 / 0;});
-```
-
-There's no silver bullet. Be careful with:
-- Framework / library support
-- Thread fairness
-- Synchronization
-- JNI
-- ThreadLocal variables
-
-- [Virtual Thread Deep Dive - Inside Java Newscast #23](https://nipafx.dev/inside-java-newscast-23/)
-- [Launching 10 millions virtual threads with Loom - JEP Café #12](https://inside.java/2022/07/07/jepcafe12/)
-- [Java 19 Virtual Threads - JEP Café #11](https://inside.java/2022/06/08/jepcafe11/)
-- [Loom and Thread Fairness](https://www.morling.dev/blog/loom-and-thread-fairness/)
-- [Going inside Java's Project Loom and virtual threads](https://blogs.oracle.com/javamagazine/post/going-inside-javas-project-loom-and-virtual-threads)
-
-## [JEP 428](https://openjdk.java.net/jeps/428): Structured Concurrency (First Incubator)
 ## [JEP 437](https://openjdk.java.net/jeps/437): Structured Concurrency (Second Incubator)
+
+- No changes since the first preview.
 
 ```java
 String getUser() throws InterruptedException {
@@ -206,22 +112,13 @@ String getUser() throws InterruptedException {
 };
 
 Integer getOrder() throws InterruptedException {
-    Thread.sleep(2000);
+    Thread.sleep(2_000);
 //    return 10;
     return 10/0;
 };
 
 String theUser  = getUser();
 int theOrder = getOrder();
-System.out.println(theUser + ": " + theOrder);
-```
-
-```java
-ExecutorService esvc = Executors.newFixedThreadPool(2);
-Future<String>  user  = esvc.submit(() -> getUser());
-Future<Integer> order = esvc.submit(() -> getOrder());
-String theUser  = user.get();   // Join findUser
-int theOrder = order.get();  // Join fetchOrder
 System.out.println(theUser + ": " + theOrder);
 ```
 
@@ -245,27 +142,24 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 
 ## [JEP 429](https://openjdk.java.net/jeps/429): Scoped Values (Incubator)
 
-
 ```java
-class Server {
-  
-    final static ThreadLocal<User> CURRENT_USER = new ThreadLocal<>();      // (1)
+final static ThreadLocal<String> TL = new ThreadLocal<>();
+TL.set("Hello");
+TL.get();
+Thread.ofVirtual().start(() -> System.out.println(TL.get()));
+Thread.ofPlatform().start(() -> System.out.println(TL.get()));
 
-    void serve(Request request, Response response) {
-        var level     = (request.isAuthorized() ? ADMIN : GUEST);
-        var user = new User(level);
-        CURRENT_USER.set(user);                                            // (2)
-        Application.handle(request, response);
-    }
-}
+final static InheritableThreadLocal<String> TL = new InheritableThreadLocal<>();
+TL.set("Hello");
+TL.get();
+Thread.ofVirtual().start(() -> System.out.println(TL.get()));
+Thread.ofPlatform().start(() -> System.out.println(TL.get()));
 
-class DatabaseManager {
-    DBConnection open() {
-        var user = Server.CURRENT_USER.get();                              // (3)
-        if (!user.canOpen()) throw new InvalidUserException();
-        return new DBConnection(...);                                      // (4)
-    }
-}
+Thread.ofVirtual().start(() -> {
+  TL.set("Hello from virtual");
+  System.out.println(TL.get());})
+
+TL.get();
 ```
 
 Design flaws with ThreadLocal:
@@ -277,25 +171,9 @@ Design flaws with ThreadLocal:
   a large number of threads.
 
 ```java
-class Server {
-    final static ScopedValue<User> CURRENT_USER = new ScopedValue<>();      // (1)
-
-    void serve(Request request, Response response) {
-        var level = (request. isAuthorized()? ADMIN : GUEST);
-        var user  = new User(level);
-      
-        ScopedValue.where(CURRENT_USER, user)                               // (2)
-                   .run(() -> Application.handle(request, response));       // (3)
-    }
-}
-
-class DatabaseManager {
-    DBConnection open() {
-        var user = Server.CURRENT_USER.get();                               // (4)
-        if (!user.canOpen()) throw new InvalidUserException();
-        return new DBConnection(...);
-    }
-}
+import jdk.incubator.concurrent.ScopedValue
+static final ScopedValue<String> sv = ScopedValue.newInstance();
+ScopedValue.where(sv, "anton", () -> System.out.println(sv.get()));
 ```
 
 Advantages of Scoped Values:
@@ -307,12 +185,134 @@ Advantages of Scoped Values:
 - The child threads created by StructuredTaskScope have access to the scoped
   value of the parent thread.
 
-- [Java 20 sneak peek](https://blogs.oracle.com/post/java-20-preview)
+```java
+import jdk.incubator.concurrent.StructuredTaskScope;
+
+class Example {
+
+  public static final ScopedValue<String> SV = ScopedValue.newInstance();
+
+  static String getUser() {
+    try {
+      Thread.sleep(3_000);
+    } catch (InterruptedException e) {}
+    return SV.get();
+  };
+
+  static Integer getOrder() {
+    try {
+      Thread.sleep(2_000);
+    } catch (InterruptedException e) {}
+    return 1;
+  };
+
+  static void printMessage() {
+    try {
+      try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+       Future<String>  user  = scope.fork(() -> getUser());
+       Future<Integer> order = scope.fork(() -> getOrder());
+  
+       scope.join();
+       scope.throwIfFailed();
+  
+       System.out.println(user.resultNow() + ": " + order.resultNow());
+     }
+    } catch (Exception e) {}
+  }
+}
+
+ScopedValue.where(Example.SV, "anton"). run(() -> Example.printMessage())
+```
+
+Rebinding Scoped Values:
+
+```java
+class Example {
+
+  public static final ScopedValue<String> SV = ScopedValue.newInstance();
+
+  static String getUser() {
+    try {
+      Thread.sleep(3_000);
+    } catch (InterruptedException e) {}
+
+    // Rebinding the scoped value:
+    ScopedValue.where(Example.SV, "Non Anton"). run(() -> System.out.println(Example.SV.get()));
+    return SV.get();
+  };
+
+  static Integer getOrder() {
+    try {
+      Thread.sleep(2_000);
+    } catch (InterruptedException e) {}
+    return 1;
+  };
+
+  static void printMessage() {
+    try {
+      try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+       Future<String>  user  = scope.fork(() -> getUser());
+       Future<Integer> order = scope.fork(() -> getOrder());
+  
+       scope.join();
+       scope.throwIfFailed();
+  
+       System.out.println(user.resultNow() + ": " + order.resultNow());
+     }
+    } catch (Exception e) {}
+  }
+}
+
+ScopedValue.where(Example.SV, "anton"). run(() -> Example.printMessage())
+```
+
+- [Java API](https://download.java.net/java/early_access/loom/docs/api/jdk.incubator.concurrent/jdk/incubator/concurrent/ScopedValue.html)
+- [JEP Cafe - Java 20 - From ThreadLocal to ScopedValue with Loom Full Tutorial](https://www.youtube.com/watch?v=fjvGzBFmyhM)
 - [JEP 429: Extent-Local Variables to Promote Immutability in Java](https://www.infoq.com/news/2022/09/extent-local-variables-java/)
 - [Scoped values in Java](https://www.happycoders.eu/java/scoped-values/)
 
+## [JEP 434](https://openjdk.java.net/jeps/434): Foreign Function & Memory API (Second Preview)
+
+```java
+import java.lang.foreign.*;
+import java.lang.invoke.MethodHandle;
+import static java.lang.foreign.ValueLayout.ADDRESS;
+import static java.lang.foreign.ValueLayout.JAVA_LONG;
+
+public long getStringLength(String content) throws Throwable {
+    // 1. Get a lookup object for commonly used libraries
+    SymbolLookup stdlib = Linker.nativeLinker().defaultLookup();
+
+    // 2. Get a handle on the strlen function in the C standard library
+    MethodHandle strlen = Linker.nativeLinker().downcallHandle(
+            stdlib.find("strlen").orElseThrow(),
+            FunctionDescriptor.of(JAVA_LONG, ADDRESS));
+  
+    long len = 0;
+
+    // 3. Convert Java String to C string and store it in off-heap memory
+    try (Arena offHeap = Arena.openConfined()) {
+        MemorySegment str = offHeap.allocateUtf8String(content);
+      
+        // 4. Invoke the foreign function
+        len = (long) strlen.invoke(str);
+    }
+    // 5. Off-heap memory is deallocated at the end of try-with-resources
+    // 6. Return the length.
+    return len;
+}
+
+getStringLength("Java 20 demo!")
+
+```
+
+## [JEP 438](https://openjdk.java.net/jeps/438): Vector API (Fifth Incubator)
+
+Small set of bug fixes and performance enhancements
+
 ## Resources
 
+- [Java 20 sneak peek](https://blogs.oracle.com/post/java-20-preview)
 - <https://sdkman.io/>
 - <https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html>
 - <https://www.jbang.dev/>
