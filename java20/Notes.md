@@ -9,7 +9,7 @@
 ```sh
 sdk install java 20.ea.36-open
 sdk use java 20.ea.36-open
-jshell --enable-preview --add-modules jdk.incubator.concurrent
+jshell --enable-preview --add-modules jdk.incubator.concurrent --enable-native-access=ALL-UNNAMED
 ```
 
 ## New features
@@ -35,7 +35,7 @@ static int testSealedExhaustive(S s) {
     return switch (s) {
         case A a -> 1;
         case B b -> 2;
-//        case C c -> 3;
+        case C c -> 3;
     };
 }
 ```
@@ -46,7 +46,7 @@ var c = Color.RED;
 var result = switch(c) {
   case RED -> 0;
   case GREEN -> 1;
-  // case BLUE -> 2;
+  case BLUE -> 2;
 }
 ```
 
@@ -59,10 +59,10 @@ record B(int x, int y) implements S {}
 S o = new A(0, 0);
 
 switch (o) {
-  case A(int x, int y) when x >= 0 -> System.out.println("A, positive x");
+  case A(int x, int y) when x >= 10 -> System.out.println("A, positive x");
   case A(int x, int y) when x < 0 -> System.out.println("B, negative x");
   case B(int x, int y) -> System.out.println("B");
-  default -> System.out.println("Any of the previous options");
+  //default -> System.out.println("Any of the previous options");
 }
 ```
 
@@ -221,7 +221,7 @@ class Example {
   }
 }
 
-ScopedValue.where(Example.SV, "anton"). run(() -> Example.printMessage())
+ScopedValue.where(Example.SV, "anton").run(() -> Example.printMessage())
 ```
 
 Rebinding Scoped Values:
@@ -237,7 +237,7 @@ class Example {
     } catch (InterruptedException e) {}
 
     // Rebinding the scoped value:
-    ScopedValue.where(Example.SV, "Non Anton"). run(() -> System.out.println(Example.SV.get()));
+    ScopedValue.where(Example.SV, "Non Anton").run(() -> System.out.println(Example.SV.get()));
     return SV.get();
   };
 
@@ -306,13 +306,16 @@ getStringLength("Java 20 demo!")
 
 ```
 
+- [Java 20 sneak peek](https://blogs.oracle.com/post/java-20-preview)
+- [Java 20: Colossal Sparse Memory Segments](https://minborgsjavapot.blogspot.com/2023/01/java-20-colossal-sparse-memory-segments.html)
+- [Java 20: An Almost Infinite Memory Segment Allocator](https://minborgsjavapot.blogspot.com/2023/01/java-20-almost-infinite-memory-segment.html)
+
 ## [JEP 438](https://openjdk.java.net/jeps/438): Vector API (Fifth Incubator)
 
 Small set of bug fixes and performance enhancements
 
 ## Resources
 
-- [Java 20 sneak peek](https://blogs.oracle.com/post/java-20-preview)
 - <https://sdkman.io/>
 - <https://cr.openjdk.java.net/~rfield/tutorial/JShellTutorial.html>
 - <https://www.jbang.dev/>
