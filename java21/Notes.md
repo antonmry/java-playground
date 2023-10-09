@@ -16,8 +16,9 @@ jshell --enable-preview --enable-native-access=ALL-UNNAMED
 
 ## [JEP 444](https://openjdk.java.net/jeps/444): Virtual Threads
 ## [JEP 453](https://openjdk.java.net/jeps/453): Structured Concurrency (Preview)
+## [JEP 446](https://openjdk.java.net/jeps/446): Scoped Values (Preview)
 
-Already covered in Java 20 (and before).
+Already covered in Java 20.
 
 ```java
 Thread.ofPlatform().start(() -> System.out.println(Thread.currentThread()));
@@ -45,7 +46,7 @@ switch (o) {
 }
 ```
 
-443:	Unnamed Patterns and Variables (Preview)
+## [JEP 443](https://openjdk.java.net/jeps/443): Unnamed Patterns and Variables (Preview)
 
 ```java
 
@@ -128,310 +129,68 @@ String s = FMT."%03d\{x} + %03d\{y} = %03d\{x + y}";
 
 ## [JEP 431](https://openjdk.java.net/jeps/431): Sequenced Collections
 
-446:	Scoped Values (Preview)
-
-439:	Generational ZGC
-449:	Deprecate the Windows 32-bit x86 Port for Removal
-451:	Prepare to Disallow the Dynamic Loading of Agents
-452:	Key Encapsulation Mechanism API
-442:	Foreign Function & Memory API (Third Preview)
-448:	Vector API (Sixth Incubator)
-
-## [JEP 4](https://openjdk.java.net/jeps/4): 
-## [JEP 4](https://openjdk.java.net/jeps/4): 
-## [JEP 4](https://openjdk.java.net/jeps/4): 
-## [JEP 4](https://openjdk.java.net/jeps/4): 
-## [JEP 4](https://openjdk.java.net/jeps/4): 
-## [JEP 4](https://openjdk.java.net/jeps/4): 
-## [JEP 4](https://openjdk.java.net/jeps/4): 
-
-
-
-
-
-
-
-
-
-
-
-
-## [JEP 433](https://openjdk.java.net/jeps/433): Pattern Matching for switch (Fourth Preview)
-
-- An exhaustive switch (i.e., a switch expression or a pattern switch
-  statement) over an enum class now throws MatchException rather than
-  IncompatibleClassChangeError if no switch label applies at run time.
-- The grammar for switch labels is simpler.
-- Inference of type arguments for generic record patterns is now supported in
-  switch expressions and statements, along with the other constructs that
-  support patterns.
-
 ```java
-
-sealed interface S permits A, B, C {} // Java 17, JEP 409
-final class A implements S {}
-final class B implements S {}
-record C(int i) implements S {}  // Implicitly final
-
-static int testSealedExhaustive(S s) {
-    return switch (s) {
-        case A a -> 1;
-        case B b -> 2;
-        case C c -> 3;
-    };
+interface SequencedCollection<E> extends Collection<E> {
+    // new method
+    SequencedCollection<E> reversed();
+    // methods promoted from Deque
+    void addFirst(E);
+    void addLast(E);
+    E getFirst();
+    E getLast();
+    E removeFirst();
+    E removeLast();
 }
 ```
 
 ```java
-enum Color { RED, GREEN, BLUE; }
-var c = Color.RED;
-var result = switch(c) {
-  case RED -> 0;
-  case GREEN -> 1;
-  case BLUE -> 2;
-}
+var list = List.of(1,2,3,4)
+
+list.get(0)
+list.getFirst()
+
+list.get(list.size() - 1)
+list.getLast()
+
+list.reversed()
+
+IntStream.rangeClosed(1, list.size()).forEach(i -> System.out.println("Value: " + list.get(list.size() - i)))
+list.reversed().forEach(i -> System.out.println("Value: " + i))
 ```
 
 ```java
+var map = Map.of("key1", "value1", "key2", "value2");
 
-sealed interface S permits A, B {}
-record A(int x, int y) implements S {}
-record B(int x, int y) implements S {}
+map.firstEntry()
 
-S o = new A(0, 0);
+var map = new LinkedHashMap<>();
+map.put( "key1", "value1" );
+map.put( "key2", "value2" );
 
-switch (o) {
-  case A(int x, int y) when x >= 10 -> System.out.println("A, positive x");
-  case A(int x, int y) when x < 0 -> System.out.println("B, negative x");
-  case B(int x, int y) -> System.out.println("B");
-  //default -> System.out.println("Any of the previous options");
-}
+map
+map.firstEntry()
+map
+map.pollFirstEntry()
+map
 ```
 
-## [JEP 432](https://openjdk.java.net/jeps/432): Record Patterns (Second Preview)
+## [JEP 439](https://openjdk.java.net/jeps/439): Generational ZGC
 
-- Add support for inference of type arguments of generic record patterns,
-- Add support for record patterns to appear in the header of an enhanced for
-  statement, and
-- Remove support for named record patterns.
+> ZGC (JEP 333) is designed for low latency and high scalability.
+> It has been available for production use since JDK 15 (JEP 377).
 
-```java
+> Improve application performance by extending the Z Garbage Collector (ZGC) to
+> maintain separate generations for young and old objects. This will allow ZGC
+> to collect young objects - which tend to die young - more frequently.
 
-```
+## [JEP 442](https://openjdk.java.net/jeps/442): Foreign Function & Memory API (Third Preview)
+## [JEP 448](https://openjdk.java.net/jeps/448): Vector API (Sixth Incubator)
 
-## [JEP 436](https://openjdk.java.net/jeps/436): Virtual Threads (Second Preview)
+Already covered in Java 20 (or before)
 
-- Minor changes since the first preview.
-
-```java
-Thread.ofPlatform().start(() -> System.out.println(Thread.currentThread()));
-Thread.ofVirtual().start(() -> System.out.println(Thread.currentThread()));
-```
-
-## [JEP 437](https://openjdk.java.net/jeps/437): Structured Concurrency (Second Incubator)
-
-- No changes since the first preview.
-
-```java
-String getUser() throws InterruptedException {
-    Thread.sleep(3_000);
-    return "Anton";
-};
-
-Integer getOrder() throws InterruptedException {
-    Thread.sleep(2_000);
-//    return 10;
-    return 10/0;
-};
-
-String theUser  = getUser();
-int theOrder = getOrder();
-System.out.println(theUser + ": " + theOrder);
-```
-
-```java
-import jdk.incubator.concurrent.StructuredTaskScope;
-
-try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-    Future<String>  user  = scope.fork(() -> getUser());
-    Future<Integer> order = scope.fork(() -> getOrder());
-
-    scope.join();           // Join both forks
-    scope.throwIfFailed();  // ... and propagate errors
-
-    // Here, both forks have succeeded, so compose their results
-    System.out.println(user.resultNow() + ": " + order.resultNow());
-}
-```
-
-- [Java Asynchronous Programming Full Tutorial with Loom and Structured Concurrency - JEP Café #13](https://inside.java/2022/08/02/jepcafe13/)
-- [Project Loom Brings Structured Concurrency - Inside Java Newscast #17](https://www.youtube.com/watch?v=2J2tJm_iwk0)
-
-## [JEP 429](https://openjdk.java.net/jeps/429): Scoped Values (Incubator)
-
-```java
-final static ThreadLocal<String> TL = new ThreadLocal<>();
-TL.set("Hello");
-TL.get();
-Thread.ofVirtual().start(() -> System.out.println(TL.get()));
-Thread.ofPlatform().start(() -> System.out.println(TL.get()));
-
-final static InheritableThreadLocal<String> TL = new InheritableThreadLocal<>();
-TL.set("Hello");
-TL.get();
-Thread.ofVirtual().start(() -> System.out.println(TL.get()));
-Thread.ofPlatform().start(() -> System.out.println(TL.get()));
-
-Thread.ofVirtual().start(() -> {
-  TL.set("Hello from virtual");
-  System.out.println(TL.get());})
-
-TL.get();
-```
-
-Design flaws with ThreadLocal:
-
-- Unconstrained mutability: variable's get() and set() methods can be called at
-  any time.
-- Unbounded lifetime: developers often forget to call ThreadLocal.remove().
-- Expensive inheritance: the overhead of thread-local variables when utilizing
-  a large number of threads.
-
-```java
-import jdk.incubator.concurrent.ScopedValue
-static final ScopedValue<String> sv = ScopedValue.newInstance();
-ScopedValue.where(sv, "anton", () -> System.out.println(sv.get()));
-```
-
-Advantages of Scoped Values:
-
-- They are only valid during the lifetime of the Runnable passed to the where
-  method.
-- A scoped value is immutable - it can only be reset for a new scope by
-  rebinding.
-- The child threads created by StructuredTaskScope have access to the scoped
-  value of the parent thread.
-
-```java
-import jdk.incubator.concurrent.StructuredTaskScope;
-
-class Example {
-
-  public static final ScopedValue<String> SV = ScopedValue.newInstance();
-
-  static String getUser() {
-    try {
-      Thread.sleep(3_000);
-    } catch (InterruptedException e) {}
-    return SV.get();
-  };
-
-  static Integer getOrder() {
-    try {
-      Thread.sleep(2_000);
-    } catch (InterruptedException e) {}
-    return 1;
-  };
-
-  static void printMessage() {
-    try {
-      try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-       Future<String>  user  = scope.fork(() -> getUser());
-       Future<Integer> order = scope.fork(() -> getOrder());
-  
-       scope.join();
-       scope.throwIfFailed();
-  
-       System.out.println(user.resultNow() + ": " + order.resultNow());
-     }
-    } catch (Exception e) {}
-  }
-}
-
-ScopedValue.where(Example.SV, "anton").run(() -> Example.printMessage())
-```
-
-Rebinding Scoped Values:
-
-```java
-class Example {
-
-  public static final ScopedValue<String> SV = ScopedValue.newInstance();
-
-  static String getUser() {
-    try {
-      Thread.sleep(3_000);
-    } catch (InterruptedException e) {}
-
-    // Rebinding the scoped value:
-    ScopedValue.where(Example.SV, "Non Anton").run(() -> System.out.println(Example.SV.get()));
-    return SV.get();
-  };
-
-  static Integer getOrder() {
-    try {
-      Thread.sleep(2_000);
-    } catch (InterruptedException e) {}
-    return 1;
-  };
-
-  static void printMessage() {
-    try {
-      try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-       Future<String>  user  = scope.fork(() -> getUser());
-       Future<Integer> order = scope.fork(() -> getOrder());
-  
-       scope.join();
-       scope.throwIfFailed();
-  
-       System.out.println(user.resultNow() + ": " + order.resultNow());
-     }
-    } catch (Exception e) {}
-  }
-}
-
-ScopedValue.where(Example.SV, "anton"). run(() -> Example.printMessage())
-```
-
-- [Java API](https://download.java.net/java/early_access/loom/docs/api/jdk.incubator.concurrent/jdk/incubator/concurrent/ScopedValue.html)
-- [JEP Cafe - Java 20 - From ThreadLocal to ScopedValue with Loom Full Tutorial](https://www.youtube.com/watch?v=fjvGzBFmyhM)
-- [JEP 429: Extent-Local Variables to Promote Immutability in Java](https://www.infoq.com/news/2022/09/extent-local-variables-java/)
-- [Scoped values in Java](https://www.happycoders.eu/java/scoped-values/)
-
-## [JEP 434](https://openjdk.java.net/jeps/434): Foreign Function & Memory API (Second Preview)
-
-```java
-import java.lang.foreign.*;
-import java.lang.invoke.MethodHandle;
-import static java.lang.foreign.ValueLayout.ADDRESS;
-import static java.lang.foreign.ValueLayout.JAVA_LONG;
-
-public long getStringLength(String content) throws Throwable {
-    // 1. Get a lookup object for commonly used libraries
-    SymbolLookup stdlib = Linker.nativeLinker().defaultLookup();
-
-    // 2. Get a handle on the strlen function in the C standard library
-    MethodHandle strlen = Linker.nativeLinker().downcallHandle(
-            stdlib.find("strlen").orElseThrow(),
-            FunctionDescriptor.of(JAVA_LONG, ADDRESS));
-  
-    long len = 0;
-
-    // 3. Convert Java String to C string and store it in off-heap memory
-    try (Arena offHeap = Arena.openConfined()) {
-        MemorySegment str = offHeap.allocateUtf8String(content);
-      
-        // 4. Invoke the foreign function
-        len = (long) strlen.invoke(str);
-    }
-    // 5. Off-heap memory is deallocated at the end of try-with-resources
-    // 6. Return the length.
-    return len;
-}
-
-getStringLength("Java 20 demo!")
-
-```
+## [JEP 449](https://openjdk.java.net/jeps/449): Deprecate the Windows 32-bit x86 Port for Removal
+## [JEP 451](https://openjdk.java.net/jeps/451): Prepare to Disallow the Dynamic Loading of Agents
+## [JEP 452](https://openjdk.java.net/jeps/452): Key Encapsulation Mechanism API
 
 ## Resources
 
