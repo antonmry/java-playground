@@ -59,7 +59,7 @@ if (o instanceof A(int x, int y)) {
     System.out.println(x + y);
 }
 
-if (o instanceof A(int x, int _)) {System.out.println(x);}
+if (o instanceof A(int x, _)) {System.out.println(x);}
 
 A[] as = new A[]{new A(0,0), new A(1,1)}
 
