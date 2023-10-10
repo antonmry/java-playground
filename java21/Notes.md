@@ -59,7 +59,7 @@ if (o instanceof A(int x, int y)) {
     System.out.println(x + y);
 }
 
-if (o instanceof A(int x, int 1)) {System.out.println(x);}
+if (o instanceof A(int x, int _)) {System.out.println(x);}
 
 A[] as = new A[]{new A(0,0), new A(1,1)}
 
@@ -75,7 +75,7 @@ try {
   System.out.println("Bad number");
 }
 
-try { int i = Integer.parseInt(a);} catch (NumberFormatException _) { System.out.println("Bad number");}
+try { int i = Integer.parseInt("a");} catch (NumberFormatException _) { System.out.println("Bad number");}
 ```
 
 ## [JEP 445](https://openjdk.java.net/jeps/445): Unnamed Classes and Instance Main Methods (Preview)
