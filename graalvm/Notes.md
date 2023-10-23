@@ -33,19 +33,21 @@ java -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI -XX:+UseJVMCICompiler -Dg
 - https://github.com/oracle/graaljs/releases/
 
 ```sh
-wget https://github.com/oracle/graaljs/releases/download/graal-23.1.0/graaljs-23.1.0-macos-amd64.tar.gz
-sudo xattr -r -d com.apple.quarantine graaljs-23.1.0-macos-amd64.tar.gz
-tar -zxvf graaljs-23.1.0-macos-amd64.tar.gz
-graaljs-23.1.0-macos-amd64/bin/js --version
-graaljs-23.1.0-macos-amd64/bin/js
+wget https://github.com/oracle/graaljs/releases/download/graal-23.1.0/graaljs-community-23.1.0-macos-aarch64.tar.gz
+wget https://github.com/oracle/graaljs/releases/download/graal-23.1.0/graalnodejs-community-23.1.0-macos-aarch64.tar.gz
+sudo xattr -r -d com.apple.quarantine graaljs-community-23.1.0-macos-aarch64.tar.gz
+sudo xattr -r -d com.apple.quarantine graalnodejs-community-23.1.0-macos-aarch64.tar.gz
+tar -zxvf graaljs-community-23.1.0-macos-aarch64.tar.gz
+tar -zxvf graalnodejs-community-23.1.0-macos-aarch64.tar.gz
+graaljs-community-23.1.0-macos-aarch64/bin/js --version
+graalnodejs-community-23.1.0-macos-aarch64/bin/node -v
+graaljs-community-23.1.0-macos-aarch64/bin/js
 ```
 
 ```javascript
 var BigInteger = Java.type('java.math.BigInteger');
 console.log(BigInteger.valueOf(200000).toString(16));
 ```
-
-- https://github.com/graalvm/polyglot-embedding-demo/
 
 ```sh
 mvn compile com.github.johnpoth:jshell-maven-plugin:1.4:run
@@ -80,8 +82,6 @@ java CountUppercase "Hello Codely!"
 
 native-image CountUppercase
 ls -lah countuppercase
-
-./countuppercase "Hello Codely"
 
 ./countuppercase "Hello Codely"
 
