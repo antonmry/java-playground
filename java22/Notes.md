@@ -107,6 +107,7 @@ Stream.of(1,2,3,4,5,6,7,8,9).gather(
 ```
 
 ## [JEP 458](https://openjdk.java.net/jeps/458): Launch Multi-File Source-Code Programs
+## [JEP 463](https://openjdk.java.net/jeps/463): Implicitly Declared Classes and Instance Main Methods (Second Preview)
 
 ```sh
 java --enable-preview --source 22 Hello.java Anton
@@ -151,7 +152,6 @@ try (Arena offHeap = Arena.ofConfined()) {
 JNI related. Avoid unnecesary pauses.
 
 ## [JEP 459](https://openjdk.java.net/jeps/459): String Templates (Second Preview)
-## [JEP 463](https://openjdk.java.net/jeps/463): Implicitly Declared Classes and Instance Main Methods (Second Preview)
 
 Already covered in Java 21 session.
 
