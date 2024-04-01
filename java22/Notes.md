@@ -108,7 +108,9 @@ Stream.of(1,2,3,4,5,6,7,8,9).gather(
 
 ## [JEP 458](https://openjdk.java.net/jeps/458): Launch Multi-File Source-Code Programs
 
+```sh
 java --enable-preview --source 22 Hello.java Anton
+```
 
 ## [JEP 454](https://openjdk.java.net/jeps/454): Foreign Function & Memory API
 
