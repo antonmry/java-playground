@@ -2,7 +2,7 @@
 
 - <https://en.wikipedia.org/wiki/Java_version_history>
 - <https://openjdk.java.net/projects/jdk/22/>
-- <https://jdk.java.net/21/>
+- <https://jdk.java.net/22/>
 
 ## Install Java 22
 
