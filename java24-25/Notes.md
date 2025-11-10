@@ -85,7 +85,9 @@ public class HelloWorld {
         System.out.println("Hello, World!");
     }
 }
+```
 
+```java
 // Now, with simple source files and instance main methods
 void main() {
     System.out.println("Hello, World!");
@@ -134,9 +136,8 @@ Stream.of(1,2,3).gather(doubleIt).toList();  // [2, 4, 6]
 
 See [gatherers4j](https://tginsberg.github.io/gatherers4j/) for more gatherers.
 
-## [JEP 499](https://openjdk.java.net/jeps/499): Structured Concurrency (Fourth Preview)
-
-## [JEP 505](https://openjdk.java.net/jeps/505): Structured Concurrency (Fifth Preview)
+### [JEP 499](https://openjdk.java.net/jeps/499): Structured Concurrency (Fourth Preview)
+### [JEP 505](https://openjdk.java.net/jeps/505): Structured Concurrency (Fifth Preview)
 
 ```java
 import java.util.concurrent.*;
@@ -197,7 +198,6 @@ try (var s = StructuredTaskScope.open(
 ```
 
 ### [JEP-487](https://openjdk.java.net/jeps/487): Scoped Values (Fourth Preview)
-
 ### [JEP-506](https://openjdk.java.net/jeps/506): Scoped Values
 
 ```java
@@ -339,7 +339,6 @@ time java -XX:AOTCache=inmem.aot InMemAOT 10000
 
 # baseline (no AOT, default CDS)
 time java InMemAOT 10000
-
 ```
 
 
