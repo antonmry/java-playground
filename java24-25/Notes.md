@@ -31,8 +31,8 @@ public Object processValue(Object obj) {
     };
 }
 
-processValue(2)
-processValue("hello CoruñaJUG!")
+processValue(2);
+processValue("hello CoruñaJUG!");
 ```
 
 ### [JEP-492](https://openjdk.java.net/jeps/492): Flexible Constructor Bodies (Third Preview)
@@ -239,6 +239,57 @@ ScopedValue.where(RID, "req-42").run(() -> {
 });
 ```
 
+### [JEP-491](https://openjdk.java.net/jeps/491): Synchronize Virtual Threads without Pinning
+
+```sh
+sdk use java 23.0.1-open
+jshell --enable-preview --enable-native-access=ALL-UNNAMED
+```
+
+```java
+import java.time.Duration;
+import java.util.concurrent.*;
+
+// run N tasks; each enters a synchronized block, then blocks (sleep) inside it
+int N = 2000;
+long t0 = System.nanoTime();
+
+try (var exec = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().factory())) {
+    for (int i = 0; i < N; i++) {
+        final Object lock = new Object();                 // no contention; each task has its own monitor
+        exec.submit(() -> {
+            synchronized (lock) {
+                try { Thread.sleep(200); }                // blocking inside synchronized
+                catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+            }
+        });
+    }
+} // Auto-close waits for tasks to finish
+
+System.out.println(Duration.ofNanos(System.nanoTime() - t0));
+```
+
+### [JEP-450](https://openjdk.java.net/jeps/450): Compact Object Headers (Experimental)
+### [JEP-519](https://openjdk.java.net/jeps/519): Compact Object Headers
+
+```sh
+javac COHSize.java
+
+# Check default
+java -XX:+PrintFlagsFinal -version | grep UseCompactObjectHeaders
+
+# Force OFF
+java -Xms3g -Xmx3g -XX:-UseCompactObjectHeaders COHSize 8000000
+
+# Force ON
+java -Xms3g -Xmx3g -XX:+UseCompactObjectHeaders COHSize 8000000
+```
+
+
+![COH PNG](coh.png)
+
+See https://www.reddit.com/r/scala/comments/1jptiv3/xxusecompactobjectheaders_is_your_new_turbo/
+
 ### [JEP](https://openjdk.java.net/jeps/):
 
 ```java
@@ -252,29 +303,6 @@ ScopedValue.where(RID, "req-42").run(() -> {
 ### [JEP](https://openjdk.java.net/jeps/):
 
 ```java
-```
-
-### [JEP](https://openjdk.java.net/jeps/):
-
-```java
-```
-
-### [JEP](https://openjdk.java.net/jeps/):
-
-```java
-```
-
-## TODO
-
-- [ ] Tmux and slime
-- [x] Markdown preview?
-- [x] Neovim syntax
-
-```
-let g:markdown_fenced_languages = ['java']
-syntax on
-colorscheme lunarpeche
-set background=light
 ```
 
 ## Resources
