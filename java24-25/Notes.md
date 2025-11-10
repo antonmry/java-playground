@@ -6,7 +6,7 @@
 - <https://jdk.java.net/24/>
 - <https://jdk.java.net/25/>
 
-## Install Java 23, 24 (and 26 ea)
+## Install Java 24, 25 (and 26 ea)
 
 ```sh
 curl -s "https://get.sdkman.io" | bash
@@ -290,23 +290,62 @@ java -Xms3g -Xmx3g -XX:+UseCompactObjectHeaders COHSize 8000000
 
 See https://www.reddit.com/r/scala/comments/1jptiv3/xxusecompactobjectheaders_is_your_new_turbo/
 
-### [JEP](https://openjdk.java.net/jeps/):
+### [JEP-502](https://openjdk.java.net/jeps/502): Stable Values (Preview)
 
 ```java
-```
+static volatile String cfgNoStable;
+static final Object LOCK = new Object();
 
-### [JEP](https://openjdk.java.net/jeps/):
+static String config2() {
+    var v = cfgNoStable;
+    if (v == null) {
+        synchronized (LOCK) {
+            if (cfgNoStable == null) {
+                cfgNoStable = "computed-" + System.currentTimeMillis();
+            }
+            v = cfgNoStable;
+        }
+    }
+    return v;
+}
+```
 
 ```java
+import java.lang.StableValue;
+var cfg = StableValue.<String>of();
+String config() {
+    return cfg.orElseSet(() -> "computed-"+System.currentTimeMillis());
+}
+config()
 ```
 
-### [JEP](https://openjdk.java.net/jeps/):
+### [JEP-483](https://openjdk.java.net/jeps/483): Ahead-of-Time Class Loading & Linking
 
-```java
+```bash
+# compile
+javac InMemAOT.java
+
+# record classes used
+java -XX:AOTMode=record -XX:AOTConfiguration=inmem.aotconf InMemAOT 10000
+
+# create the AOT cache
+java -XX:AOTMode=create -XX:AOTConfiguration=inmem.aotconf -XX:AOTCache=inmem.aot
+
+# baseline (no AOT, default CDS)
+time java InMemAOT 10000
+
+# run using the cache
+time java -XX:AOTCache=inmem.aot InMemAOT 10000
+
+# baseline (no AOT, default CDS)
+time java InMemAOT 10000
+
 ```
+
 
 ## Resources
 
+- <https://github.com/antonmry/java-playground>
 - [Java 24 with examples](https://www.happycoders.eu/java/java-24-features/)
 - [Java 25 with examples](https://www.happycoders.eu/java/java-25-features/)
 - <https://sdkman.io/>

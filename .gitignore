@@ -9,3 +9,5 @@ javaagent/newrelic
 # Java
 *.jar
 *.class
+*.aot
+*.aotconf
